@@ -83,7 +83,96 @@
 
 ;;================================================================================
 ;; Q5:
-;;      Write the function called (deep-sum lst) that returns the sum of all the 
-;;      numbers in lst, including numbers within lists. 
-;;      Non-numbers should be ignored
+;;      Write a function called (count-primes n) that returns the number of primes 
+;;      less than, or equal to, n
 ;;================================================================================
+(define count-primes
+    (lambda (n)
+        (cond
+            ((< n 2)
+                0) ;; base case
+            (else
+                (+ (if (is-prime? n) 1 0)
+                    (count-primes (- n 1)))
+                ) ;; recursive call
+        )
+    )
+)
+
+(define is-prime? 
+    (lambda (n)
+        (cond
+            ((< n 2)
+                #f)
+            ((and 
+                (not(= n 2))
+                (zero? (remainder n 2))
+                )
+                    #f) ;; skip basic cases for efficiency
+            ((and 
+                (not(= n 3))
+                (zero? (remainder n 3))
+                )
+                    #f) ;; skip basic cases for efficiency
+            ((and 
+                (not(= n 5))
+                (zero? (remainder n 5))
+                )
+                    #f) ;; skip basic cases for efficiency
+            (else
+                (is-prime-helper? n 2))
+        )
+    )
+)
+
+(define is-prime-helper?
+    (lambda (a b)
+        (cond   
+            ((< a (* b b))
+                #t)
+            ((zero? (remainder a b)) 
+                #f) ;; a is not prime
+            (else
+                (is-prime-helper? a (+ b 1))) ;; loop from 2 up to b^2
+        )
+    )
+)
+
+;;================================================================================
+;; Q6:
+;;      Write a function called (is-bit? x) that returns #t when x is the number 
+;;      0 or 1, and #f otherwise.
+;;================================================================================
+(define is-bit?
+    (lambda (x)
+        (cond 
+            ((and 
+                  (integer? x) 
+                  (or (= x 0) (= x 1))
+                )
+                #t)
+            (else
+                #f)
+        )
+    )
+)
+
+;;================================================================================
+;; Q7:
+;;      Write a function called (is-bit-seq? lst) that returns true if lst is the 
+;;      empty list, or if it contains only bits (as defined by is-bit?).
+;;================================================================================
+(define is-bit-seq?
+    (lambda (lst)
+        (cond
+            ((null? lst) ;; base case
+                #t)
+            (else
+                (and 
+                    (is-bit? (car lst))
+                    (is-bit-seq? (cdr lst)) ;; recursive call
+                )
+            )
+        )
+    )
+)
