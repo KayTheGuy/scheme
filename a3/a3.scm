@@ -34,12 +34,9 @@
         (cond
             ((null? lst)
                 (cons x lst)) ;; base case
-            ((null? (cdr lst))
-                ;; append x before the only element of x
-                (cons (car lst) (cons x (cdr lst)))) 
             (else 
                 ;; recursive call
-                (cons (car lst) (snoc (cdr lst))))
+                (cons (car lst) (snoc x (cdr lst))))
         )
     )
 )
@@ -52,7 +49,7 @@
 (define range
     (lambda (n)
         (cond 
-            ((or (= n 0) (< n 0)) ;; base case
+            ((<= n 0) ;; base case
                 '())
             (else
                 (snoc (- n 1) (range (- n 1)))) ;; use snoc defined above as helper
@@ -176,3 +173,10 @@
         )
     )
 )
+;;================================================================================
+;; Q8:
+;;      Write a function called (all-bit-seqs n) that returns a list of all the 
+;;      bit sequences of length n. The order of the sequences doesn’t matter. 
+;;      If n is less than 1, then return an empty list. 
+;;      You can assume that n is an integer.
+;;================================================================================
