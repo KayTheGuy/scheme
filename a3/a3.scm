@@ -203,12 +203,12 @@
 ;; appends x to all elements of list
 (define append-to-elements
     (lambda (x lst)
-    (cond
-        ((null? lst)
-            '()) 
-        (else
-            (cons (cons x (car lst)) (append-to-elements x(cdr lst)))
+        (cond
+            ((null? lst)
+                '()) 
+            (else
+                (cons (cons x (car lst)) (append-to-elements x (cdr lst)))
+            )
         )
-    )
     )
 )
