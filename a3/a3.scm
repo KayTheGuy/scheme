@@ -180,3 +180,35 @@
 ;;      If n is less than 1, then return an empty list. 
 ;;      You can assume that n is an integer.
 ;;================================================================================
+(define all-bit-seqs
+    (lambda (n)
+        (cond 
+            ((< n 1)          ;; return empty list on invalid input
+                '()
+            )
+            ((= n 1)           ;; base case
+                '((0) (1))
+            )
+            (else
+                (append 
+                    (append-to-elements 0 (all-bit-seqs (- n 1))) ;; append 0 to all elements
+                    (append-to-elements 1 (all-bit-seqs (- n 1))) ;; append 1 to all elements
+                )
+            )
+        )
+    )
+)
+
+;; helper function for all-bit-seqs
+;; appends x to all elements of list
+(define append-to-elements
+    (lambda (x lst)
+    (cond
+        ((null? lst)
+            '()) 
+        (else
+            (cons (cons x (car lst)) (append-to-elements x(cdr lst)))
+        )
+    )
+    )
+)
