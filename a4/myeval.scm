@@ -8,6 +8,52 @@
 (load "env1.scm")
 
 ;; ========================================================================================================
+;; Helper: evaluates expression
+;; ========================================================================================================
+(define eval-expr
+    (lambda (e)
+        (cond
+            ((number? e)    ;; return the number itslef
+                e
+            )
+            ((is-add? e)    ;; (e1 + e2)
+                (+  (eval-expr (first e)) 
+                    (eval-expr (third e))
+                )
+            )
+            ((is-sub? e)    ;; (e1 - e2)
+                (-  (eval-expr (first e)) 
+                    (eval-expr (third e))
+                )
+            )
+            ((is-mul? e)    ;; (e1 * e2)
+                (*  (eval-expr (first e)) 
+                    (eval-expr (third e))
+                )
+            )
+            ((is-div? e)    ;; (e1 / e2)
+                (if (= 0 (eval-expr (third e)))
+                    (error "my-eval: division by 0")    ;; division by zero
+                    (/  (eval-expr (first e))           ;; valid division
+                        (eval-expr (third e))
+                    )
+                )
+                
+            )
+            ((is-inc? e)    ;; (inc e)
+                (+  1 
+                    (eval-expr (second e)) 
+                )
+            )
+            ((is-dec? e)    ;; (dec e)
+                (-   (eval-expr (second e)) 
+                     1
+                )
+            )
+        )
+    )
+)
+;; ========================================================================================================
 ;; Helper: returns true if the argument follows the following grammar:
 ;; expr =  "(" expr "+" expr ")"
 ;;         | "(" expr "-" expr ")"
@@ -154,6 +200,25 @@
         (and 
             (list? lst)
             (= n (length lst))
+        )
+    )
+)
+
+;; ========================================================================================================
+;; Helper: returns x to the power of y. Assumes x and y are numbers
+;; ========================================================================================================
+(define power
+    (lambda (x y)
+        (cond
+            ((= 0 y)    ;; 5**0=1 and 0**0=1 and (-5)**0=1
+                1
+            )
+            ((positive? y)    ;; 2**3=2*2*2*1
+                (* x (power x (- y 1)))
+            )
+            (else             ;; 2**(-3)=((1/2)/2)/2
+                (/ (power x (+ y 1)) x)
+            )
         )
     )
 )
