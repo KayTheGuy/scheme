@@ -1,0 +1,12 @@
+(load "myeval.scm")
+
+(is-expr? 'a)
+(is-expr? 'e)
+(is-expr? 1)
+(is-expr? '(1 + 2))
+(is-expr? '(1 + (2 / (b - u))))
+(is-expr? '(1 * (2 - (b - u))))
+(is-expr? '(1 / (2 * (b / u))))
+(is-expr? '(1 ** (2 * (inc u))))
+(is-expr? '(inc (1 ** (2 * (inc u)))))
+(is-expr? '(inc (1 ** (2 * (dec u)))))
