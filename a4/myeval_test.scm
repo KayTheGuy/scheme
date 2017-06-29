@@ -27,7 +27,13 @@
 (myeval '((m * a) - 0.1)   ;; the expression
            env2               ;; the environment
    )
+
+(myeval '(2)   ;; the expression
+           env2               ;; the environment
+   )
+(myeval '(m)   ;; the expression
+           env2               ;; the environment
+   )
 (myeval '(4 * (s * s))     ;; the expression
            env3  )             ;; the environment
    
-

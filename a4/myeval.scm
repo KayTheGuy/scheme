@@ -7,17 +7,38 @@
 
 (load "env1.scm")
 
+;; ########################################################################################################
+;; Grammar Rules:
+;; expr =  "(" expr "+" expr ")"
+;;         | "(" expr "-" expr ")"
+;;         | "(" expr "*" expr ")"
+;;         | "(" expr "/" expr ")"
+;;         | "(" expr "**" expr ")"  ;; e.g. (2 ** 3) is 8, (3 ** 3) is 27
+;;         | "(" "inc" expr ")"      ;; adds 1 to expr
+;;         | "(" "dec" expr ")"      ;; subtracts 1 from expr
+;;         | var
+;;         | number
+;; number = a Scheme number
+;; var    = a Scheme symbol
+;; ########################################################################################################
+
 ;; ========================================================================================================
 ;; Main function: 
 ;; ========================================================================================================
 (define myeval
     (lambda (expr env)
         (cond
-            ((symbol? expr)    ;; find the value of expression in the environment
+            ((symbol? expr)    ;; base case for recursions: find the value of expression in the environment
                 (apply-env env expr)
             )
-            ((number? expr)    ;; return the number itslef
+            ((number? expr)    ;; base case for recursions: return the number itslef
                 expr
+            )
+            ((is-one-number? expr)    ;; expression is a list of one number
+                (car expr)
+            )
+            ((is-one-symbol? expr)    ;; expression is a list of one symbol
+                (apply-env env (car expr))
             )
             ((is-add? expr)    ;; (e1 + e2)
                 (+  (myeval (first expr) env) 
@@ -46,7 +67,6 @@
                         (myeval (third expr) env)
                     )
                 )
-                
             )
             ((is-inc? expr)    ;; (inc e)
                 (+  1 
@@ -64,65 +84,26 @@
         )
     )
 )
+
 ;; ========================================================================================================
-;; Helper: returns true if the argument follows the following grammar:
-;; expr =  "(" expr "+" expr ")"
-;;         | "(" expr "-" expr ")"
-;;         | "(" expr "*" expr ")"
-;;         | "(" expr "/" expr ")"
-;;         | "(" expr "**" expr ")"  ;; e.g. (2 ** 3) is 8, (3 ** 3) is 27
-;;         | "(" "inc" expr ")"      ;; adds 1 to expr
-;;         | "(" "dec" expr ")"      ;; subtracts 1 from expr
-;;         | var
-;;         | number
-;; number = a Scheme number
-;; var    = a Scheme symbol
+;; Helper: returns true if the expression is number                                  example: (2)
 ;; ========================================================================================================
-(define is-expr?
+(define is-one-number?
     (lambda (e)
-        (cond
-            ((or    (number? e)    ;; return true if e is number or symbol
-                    (symbol? e))
-                #t
-            )
-            ((is-add? e)        ;; (e1 + e2)
-                (and
-                    (is-expr? (first e))
-                    (is-expr? (third e))
-                )
-            )
-            ((is-sub? e)        ;; (e1 - e2)
-                (and
-                    (is-expr? (first e))
-                    (is-expr? (third e))
-                )
-            )
-            ((is-mul? e)        ;; (e1 * e2)
-                (and
-                    (is-expr? (first e))
-                    (is-expr? (third e))
-                )
-            )
-            ((is-div? e)        ;; (e1 / e2)
-                (and
-                    (is-expr? (first e))
-                    (is-expr? (third e))
-                )
-            )
-            ((is-pow? e)        ;; (e1 ** e2)
-                (and
-                    (is-expr? (first e))
-                    (is-expr? (third e))
-                )
-            )
-            ((is-inc? e)        ;; (inc e2)
-                (is-expr? (second e))
-            )
-            ((is-dec? e)        ;; (dec e2)
-                (is-expr? (second e))
-            )
-            (else
-                #f)
+        (and 
+            (nlist? 1 e)
+            (number? (car e))
+        )
+    )
+) 
+;; ========================================================================================================
+;; Helper: returns true if the expression is number                                  example: (a)
+;; ========================================================================================================
+(define is-one-symbol?
+    (lambda (e)
+        (and 
+            (nlist? 1 e)
+            (symbol? (car e))
         )
     )
 ) 
