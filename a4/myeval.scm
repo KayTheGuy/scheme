@@ -8,47 +8,58 @@
 (load "env1.scm")
 
 ;; ========================================================================================================
-;; Helper: evaluates expression
+;; Main function: 
 ;; ========================================================================================================
-(define eval-expr
-    (lambda (e)
+(define myeval
+    (lambda (expr env)
         (cond
-            ((number? e)    ;; return the number itslef
-                e
+            ((symbol? expr)    ;; find the value of expression in the environment
+                (apply-env env expr)
             )
-            ((is-add? e)    ;; (e1 + e2)
-                (+  (eval-expr (first e)) 
-                    (eval-expr (third e))
+            ((number? expr)    ;; return the number itslef
+                expr
+            )
+            ((is-add? expr)    ;; (e1 + e2)
+                (+  (myeval (first expr) env) 
+                    (myeval (third expr) env)
                 )
             )
-            ((is-sub? e)    ;; (e1 - e2)
-                (-  (eval-expr (first e)) 
-                    (eval-expr (third e))
+            ((is-sub? expr)    ;; (e1 - e2)
+                (-  (myeval (first expr) env) 
+                    (myeval (third expr) env)
                 )
             )
-            ((is-mul? e)    ;; (e1 * e2)
-                (*  (eval-expr (first e)) 
-                    (eval-expr (third e))
+            ((is-mul? expr)    ;; (e1 * e2)
+                (*  (myeval (first expr) env) 
+                    (myeval (third expr) env)
                 )
             )
-            ((is-div? e)    ;; (e1 / e2)
-                (if (= 0 (eval-expr (third e)))
+            ((is-pow? expr)    ;; (e1 * e2)
+                (power  (myeval (first expr) env) 
+                    (myeval (third expr) env)
+                )
+            )
+            ((is-div? expr)    ;; (e1 / e2)
+                (if (= 0 (myeval (third expr) env))
                     (error "my-eval: division by 0")    ;; division by zero
-                    (/  (eval-expr (first e))           ;; valid division
-                        (eval-expr (third e))
+                    (/  (myeval (first expr) env)           ;; valid division
+                        (myeval (third expr) env)
                     )
                 )
                 
             )
-            ((is-inc? e)    ;; (inc e)
+            ((is-inc? expr)    ;; (inc e)
                 (+  1 
-                    (eval-expr (second e)) 
+                    (myeval (second expr) env) 
                 )
             )
-            ((is-dec? e)    ;; (dec e)
-                (-   (eval-expr (second e)) 
+            ((is-dec? expr)    ;; (dec e)
+                (-   (myeval (second expr) env) 
                      1
                 )
+            )
+            (else        ;; raise error if expression is invalid
+                (error "my-eval: invalid expression")
             )
         )
     )
