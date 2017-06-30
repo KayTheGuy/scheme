@@ -36,9 +36,3 @@
    )
 (myeval '(4 * (s * s))     ;; the expression
            env3  )             ;; the environment
-
-(myeval '((2 ** (r ** (1 ** 0))) + (inc 9)) env3)
-(myeval '(((r + r) - (r + r)) * (1 * (1 + 0))) env3)
-(myeval '((1 * (r + 0)) + 0) env3)
-(myeval '((1 * r) + (r * 0)) env3)
-(myeval '(r ** (2 * (dec 1))) env3)

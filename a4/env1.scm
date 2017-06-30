@@ -7,14 +7,14 @@
 
 ;; ''''''''''''''''''''''''''''''''''''''''''''''''''''
 ;; Data structure used is a list of pairs:
-;; For example: env ---> ((b.1) (c.2))
+;; For example: env ---> ((b.1) (c.2) (d.3))
+;; equivalents JSON {"b": 1, "c":2, "d": 3}
 ;; ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 ;; ========================================================================================================
 ;; Returns a new empty environment
 ;; ========================================================================================================
 (define (make-empty-env) '()) 
-
 ;; ========================================================================================================
 ;; Returns the value of variable v in environment env. If v is not in env, then raise an error message
 ;; ========================================================================================================
@@ -24,7 +24,8 @@
             ((null? env)
                 (error "apply-env: empty environment")
             )
-            ((equal? (car (car env)) v)     ;; key of the pair same as v ?
+            ((equal?                        ;; key of the pair same as v ?
+                (car (car env)) v)     
                 (cdr (car env))             ;; return value of the pair
             )
             (else
@@ -33,7 +34,6 @@
         )
     )
 )
-
 ;; ========================================================================================================
 ;; Returns a new environment that is the same as env except that the value of v in it is val.
 ;; If v already has a value in env, then in the newly returned environment this value will be shadowed
@@ -42,13 +42,23 @@
     (lambda (v val env)
         (cond
             ((null? env)
-                (cons (cons v val) env) ;; add pair of (v.val) to empty env
+                (cons           ;; add pair of (v.val) to empty env
+                    (cons v val) 
+                    env
+                ) 
             )
-            ((equal? (car (car env)) v) ;; key of the pair same as v ?
-                (cons (cons v val) (cdr env)) ;; add new pair to env (shadow old value of pair)
+            ((equal?            ;; key of the pair same as v ?
+                (car (car env)) v) 
+                (cons           ;; add new pair to env (shadow old value of pair)
+                    (cons v val) 
+                    (cdr env)
+                ) 
             )
             (else
-                (cons (car env) (extend-env v val (cdr env))) ;; recursive call
+                (cons           ;; recursive call
+                    (car env) 
+                    (extend-env v val (cdr env))
+                ) 
             )
         )
     )

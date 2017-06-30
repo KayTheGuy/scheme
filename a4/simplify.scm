@@ -50,25 +50,25 @@
                 (- (second expr) 1)
             )
             ((is-add? expr)                    ;; (e1 + e2) and nonzero expression
-                (simplify-further expr '+)
+                (simplify-ternary expr '+)
             )
             ((is-sub? expr)                     ;; (e1 - e2) and not (e - 0) or (e - e)
-                (simplify-further expr '-)
+                (simplify-ternary expr '-)
             )
             ((is-mul? expr)                    ;; (e1 * e2) and not ((0 * e), (e * 0), 
-                (simplify-further expr '*)                         ;; (1 * e), (e * 1)
+                (simplify-ternary expr '*)                         ;; (1 * e), (e * 1)
             )
             ((is-div? expr)                    ;; (e1 / e2) 
-                (simplify-further expr '/) 
+                (simplify-ternary expr '/) 
             )
             ((is-power? expr)                    ;; (e1 ** e2) and not (e ** 0),(e ** 1),or (1 ** e) 
-                (simplify-further expr '**) 
+                (simplify-ternary expr '**) 
             )
             ((is-inc? expr)                    ;; (inc expression) and not (inc number)
-                (simplify-further-inc-dec expr 'inc)
+                (simplify-binary expr 'inc)
             )
             ((is-dec? expr)                    ;; (dec expression) and not (dec number)
-                (simplify-further-inc-dec expr 'dec)
+                (simplify-binary expr 'dec)
             )
             (else 
                 (error "simplify: invalid expression"))
@@ -78,14 +78,14 @@
 ;; ========================================================================================================
 ;; Helper: simplifies further if the subexpression change after simplification (for arithmetic operators)
 ;; ========================================================================================================
-(define simplify-further
+(define simplify-ternary
     (lambda (expr op)           ;; op is '+, or '-, ...
         (let* ((first-expr (first expr))
                 (third-expr (third expr))
                 (first-expr-simplified (simplify first-expr))
                 (third-expr-simplified (simplify third-expr))
                 )
-            (cond   ;; check if sun-expressions changed after simplification
+            (cond   ;; check if sub-expressions changed after simplification
                 ((and 
                     (equal? first-expr first-expr-simplified)
                     (equal? third-expr third-expr-simplified)
@@ -108,12 +108,12 @@
 ;; ========================================================================================================
 ;; Helper: simplifies further if the subexpression change after simplification (for inc/dec operators)
 ;; ========================================================================================================
-(define simplify-further-inc-dec
+(define simplify-binary
     (lambda (expr op)           ;; op is dec or inc
         (let* ((second-expr (second expr))
                 (second-expr-simplified (simplify second-expr))
                 )
-            (if   ;; check if sun-expressions changed after simplification
+            (if   ;; check if sub-expressions changed after simplification
                 (equal? second-expr second-expr-simplified)
                 (list           
                     op (simplify second-expr))

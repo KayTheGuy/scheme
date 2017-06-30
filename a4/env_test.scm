@@ -1,4 +1,4 @@
-(load "env1.scm")
+(load "env2.scm")
 
 (define test-env
     (extend-env 'a 1
